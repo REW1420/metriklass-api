@@ -47,18 +47,15 @@ router.post("/order-post", orderControlloer.add);
 
 //project routes
 router.post("/project-post", projectController.add);
-//router.get("/project-get", projectController.list);
-router.get("/project/owner/:owner", projectController.getProjectsByOwner);
 
-router.get("/project/team/:teamValue", projectController.getProjectsByTeam);
-// Ruta para obtener proyectos donde "team1" no está presente (GET)
-router.get("/proyectos/teamWithout/:teamValue", projectController.getProjectNo);
-router.put(
-  "/project/:projectId/mision/:misionId",
-  projectController.updateMisionStatus
-);
-router.put(
-  "/project-f/:projectId/mision/:misionId",
-  projectController.updateMisionFinished
-);
+//get all projects where im in
+router.get("/projects/in/:teamValue", projectController.getProjectsByTeam);
+//get all projects where im not it
+router.get("/projects/out/:teamValue", projectController.getProjectNo);
+//get all projects i onw
+router.get("/projects/own/:owner", projectController.getProjectsByOwner);
+
+
+//test
+router.get('/test',projectController.getAllProjectProgress)
 module.exports = router;

@@ -2,13 +2,9 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const ProjectSchema = new Schema({
-  projectName: {
-    type: String,
-    trim: true,
-  },
+  deadLine: { type: String, trim: true },
+  projectName: { type: String, trim: true },
   isProjectClose: { type: Boolean, trim: true },
-
-  deadline: { type: String, trim: true },
   projectOwner: { type: String, trim: true },
   team: [{ id: { type: String, trim: true } }],
   mision: [

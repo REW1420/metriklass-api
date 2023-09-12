@@ -25,7 +25,8 @@ exports.getProjectsByTeam = async (req, res) => {
   const teamValue = req.params.teamValue;
   try {
     const projects = await Project.find({ "team.id": teamValue });
-    res.json(projects);
+    const results = projects.map(handleGetProjectProgress);
+    res.json(results);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Error al buscar proyectos." });
@@ -37,7 +38,8 @@ exports.getProjectNo = async (req, res) => {
 
   try {
     const projects = await Project.find({ "team.id": { $nin: [teamValue] } });
-    res.json(projects);
+    const results = projects.map(handleGetProjectProgress);
+    res.json(results);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Error al buscar proyectos." });
@@ -131,9 +133,87 @@ exports.getProjectsByOwner = async (req, res) => {
         .json({ error: "Ningún proyecto encontrado para ese propietario." });
     }
 
-    res.json(projects);
+    const results = projects.map(handleGetProjectProgress);
+    res.json(results);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: error.message });
   }
 };
+
+exports.getAllProjectProgress = async (req, res) => {
+  try {
+    // Obtener todos los proyectos
+    const projects = await Project.find();
+
+    if (!projects) {
+      return res.status(404).json({ error: "No se encontraron proyectos." });
+    }
+
+    const results = projects.map(handleGetProjectProgress);
+    res.json(results);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+exports.getProjectProgress = async (req, res) => {
+  const projectId = req.params._id;
+  try {
+    const project = await Project.findById(projectId);
+
+    if (!project) {
+      return res.status(404).json({ error: "Proyecto no encontrado." });
+    }
+    //calcular el porcentaje
+    const daysLeft = project.deadLine;
+    const totalMision = project.mision.length;
+    const completedMisions = project.mision.filter(
+      (mision) => mision.isFinished
+    ).length;
+
+    res.json({
+      total: totalMision,
+      progress: hadleGetProgress(totalMision, completedMisions),
+      daysLeft: daysLeft,
+      test: handleDaysLeft(daysLeft),
+    });
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ error: "Error al calcular el porcentaje de avance." });
+  }
+};
+function handleGetProjectProgress(project) {
+  const daysLeft = project.deadLine;
+  const totalMision = project.mision.length;
+  const completedMisions = project.mision.filter(
+    (mision) => mision.isFinished
+  ).length;
+  const progress = hadleGetMisionProgress(totalMision, completedMisions);
+  const daysLeftCount = handleDaysLeft(daysLeft);
+
+  return {
+    total: totalMision,
+    progress: progress,
+    daysLeft: daysLeftCount,
+    ...project._doc,
+  };
+}
+
+function hadleGetMisionProgress(totalMision, completedMisions) {
+  const progressPercentage = Math.round((completedMisions / totalMision) * 100);
+  return progressPercentage;
+}
+function handleDaysLeft(daysLeft) {
+  const deadLine = new Date(daysLeft);
+  const date = new Date();
+
+  //calculate the diferent
+  const diferent = deadLine - date;
+
+  const res = Math.ceil(diferent / (1000 * 60 * 60 * 24));
+  return res;
+}
