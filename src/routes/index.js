@@ -3,7 +3,7 @@ const router = Router();
 const orderControlloer = require("../controllers/OrderController");
 const projectController = require("../controllers/ProjectController");
 const jwtUtils = require("../JWT");
-const Project = require("../models/Project");
+
 router.get("/", (req, res) => {
   const data = {
     id: "1",
@@ -47,6 +47,9 @@ router.post("/order-post", orderControlloer.add);
 
 //project routes
 router.post("/project-post", projectController.add);
+//router.get("/project-get", projectController.list);
+router.get("/project/owner/:owner", projectController.getProjectsByOwner);
+
 router.get("/project/team/:teamValue", projectController.getProjectsByTeam);
 // Ruta para obtener proyectos donde "team1" no está presente (GET)
 router.get("/proyectos/teamWithout/:teamValue", projectController.getProjectNo);

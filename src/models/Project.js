@@ -6,6 +6,9 @@ const ProjectSchema = new Schema({
     type: String,
     trim: true,
   },
+  isProjectClose: { type: Boolean, trim: true },
+
+  deadline: { type: String, trim: true },
   projectOwner: { type: String, trim: true },
   team: [{ id: { type: String, trim: true } }],
   mision: [

@@ -1,5 +1,14 @@
 const Project = require("../models/Project");
 
+exports.list = async (req, res) => {
+  try {
+    const projects = await Project.find({});
+    res.json(projects);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error al buscar proyectos." });
+  }
+};
 exports.add = async (req, res) => {
   try {
     const project = new Project(req.body);
@@ -108,5 +117,23 @@ exports.updateMisionFinished = async (req, res) => {
     res
       .status(500)
       .json({ error: "Error al actualizar el estado de la misión." });
+  }
+};
+exports.getProjectsByOwner = async (req, res) => {
+  const owner = req.params.owner;
+  try {
+    // Utiliza el método find para buscar proyectos con el mismo projectOwner
+    const projects = await Project.find({ projectOwner: owner });
+
+    if (projects.length === 0) {
+      return res
+        .status(404)
+        .json({ error: "Ningún proyecto encontrado para ese propietario." });
+    }
+
+    res.json(projects);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
   }
 };
