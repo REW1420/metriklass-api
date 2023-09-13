@@ -186,6 +186,29 @@ exports.getProjectProgress = async (req, res) => {
       .json({ error: "Error al calcular el porcentaje de avance." });
   }
 };
+
+exports.getCloseProject = async (req, res) => {
+  const teamValue = req.params.teamValue;
+  try {
+    const projects = await Project.find({
+      "team.id": teamValue,
+      isProjectClose: true,
+    });
+
+    if (!projects || projects.length === 0) {
+      return res
+        .status(404)
+        .json({ error: "No se encontraron proyectos completados." });
+    }
+
+    const results = projects.map(handleGetProjectProgress);
+    res.json(results);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error al buscar proyectos." });
+  }
+};
+
 function handleGetProjectProgress(project) {
   const daysLeft = project.deadLine;
   const totalMision = project.mision.length;

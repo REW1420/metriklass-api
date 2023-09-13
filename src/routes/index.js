@@ -54,8 +54,9 @@ router.get("/projects/in/:teamValue", projectController.getProjectsByTeam);
 router.get("/projects/out/:teamValue", projectController.getProjectNo);
 //get all projects i onw
 router.get("/projects/own/:owner", projectController.getProjectsByOwner);
-
+//get close project by team
+router.get("/project/close/:teamValue", projectController.getCloseProject);
 
 //test
-router.get('/test',projectController.getAllProjectProgress)
+router.get("/test", projectController.getAllProjectProgress);
 module.exports = router;
