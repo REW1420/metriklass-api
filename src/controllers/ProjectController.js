@@ -197,8 +197,8 @@ exports.getCloseProject = async (req, res) => {
 
     if (!projects || projects.length === 0) {
       return res
-        .status(404)
-        .json({ error: "No se encontraron proyectos completados." });
+        .status(200)
+        .json({ message: "No se encontraron proyectos completados." });
     }
 
     const results = projects.map(handleGetProjectProgress);
