@@ -58,6 +58,19 @@ router.get("/projects/own/:owner", projectController.getProjectsByOwner);
 router.get("/projects/close/:teamValue", projectController.getCloseProject);
 //delete project from id
 router.delete("/projects/delete/:id", projectController.deleteProject);
+//update mision status
+router.put(
+  "/projects/update-status/:projectId/:misionId",
+  projectController.updateMisionStatus
+);
+router.put(
+  "/projects/update-finished/:projectId/:misionId",
+  projectController.updateMisionFinished
+);
+router.put(
+  "/projects/update-close/:projectId",
+  projectController.updateCloseProject
+);
 //test
 router.get("/test", projectController.getAllProjectProgress);
 module.exports = router;

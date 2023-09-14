@@ -84,6 +84,23 @@ exports.updateMisionStatus = async (req, res) => {
   }
 };
 
+exports.updateCloseProject = async (req, res) => {
+  const projectId = req.params.projectId;
+  const isFinished = req.body.isFinished;
+
+  try {
+    const project = await Project.findById(projectId);
+    if (!project) {
+      return res.status(404).json({ error: "Proyecto no encontrado." });
+    }
+    project.isProjectClose = isFinished;
+    await project.save();
+
+    res.json(project);
+  } catch (error) {
+    return res.status(404).json({ error: "Erro en la peticion." });
+  }
+};
 exports.updateMisionFinished = async (req, res) => {
   const projectId = req.params.projectId;
   const misionId = req.params.misionId;
@@ -113,7 +130,7 @@ exports.updateMisionFinished = async (req, res) => {
     await project.save();
 
     res.json(mission); // Devuelve la misión actualizada
-    await project.save();
+    // await project.save();
   } catch (error) {
     console.error(error);
     res
