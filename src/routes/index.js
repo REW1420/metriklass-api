@@ -55,8 +55,9 @@ router.get("/projects/out/:teamValue", projectController.getProjectNo);
 //get all projects i onw
 router.get("/projects/own/:owner", projectController.getProjectsByOwner);
 //get close project by team
-router.get("/project/close/:teamValue", projectController.getCloseProject);
-
+router.get("/projects/close/:teamValue", projectController.getCloseProject);
+//delete project from id
+router.delete("/projects/delete/:id", projectController.deleteProject);
 //test
 router.get("/test", projectController.getAllProjectProgress);
 module.exports = router;

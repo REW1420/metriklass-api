@@ -209,6 +209,26 @@ exports.getCloseProject = async (req, res) => {
   }
 };
 
+exports.deleteProject = async (req, res) => {
+  try {
+    const project = await Project.findById({ _id: req.params.id });
+    if (!project) {
+      return res.status(404).json({
+        message: `No se encontraron proyectos con ID: ${req.params.id}`,
+      });
+    }
+
+    await project.remove();
+    res.json({ message: "Proyecto eliminado", status: 200 });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({
+      message: "Error al eliminar el proyecto",
+      error: error,
+    });
+  }
+};
+
 function handleGetProjectProgress(project) {
   const daysLeft = project.deadLine;
   const totalMision = project.mision.length;
