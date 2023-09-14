@@ -56,6 +56,8 @@ router.get("/projects/out/:teamValue", projectController.getProjectNo);
 router.get("/projects/own/:owner", projectController.getProjectsByOwner);
 //get close project by team
 router.get("/projects/close/:teamValue", projectController.getCloseProject);
+//get single project info
+router.get("/projects/info/:projectId", projectController.getprojectInfo);
 //delete project from id
 router.delete("/projects/delete/:id", projectController.deleteProject);
 //update mision status

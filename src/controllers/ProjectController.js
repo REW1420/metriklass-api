@@ -246,6 +246,21 @@ exports.deleteProject = async (req, res) => {
   }
 };
 
+exports.getprojectInfo = async (req, res) => {
+  try {
+    const project = await Project.findById({ _id: req.params.projectId });
+    if (!project) {
+      return res.status(404).json({
+        message: `No se encontraron proyectos con ID: ${req.params.id}`,
+      });
+    }
+
+    res.json(project);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error.", error });
+  }
+};
 function handleGetProjectProgress(project) {
   const daysLeft = project.deadLine;
   const totalMision = project.mision.length;
