@@ -254,7 +254,7 @@ exports.getprojectInfo = async (req, res) => {
         message: `No se encontraron proyectos con ID: ${req.params.id}`,
       });
     }
-    const results = project.map(handleGetProjectProgress);
+    const results = handleGetProjectProgress(project);
 
     res.json(results);
   } catch (error) {
