@@ -24,7 +24,10 @@ exports.add = async (req, res) => {
 exports.getProjectsByTeam = async (req, res) => {
   const teamValue = req.params.teamValue;
   try {
-    const projects = await Project.find({ "team.id": teamValue });
+    const projects = await Project.find({
+      "team.id": teamValue,
+      isProjectClose: { $ne: true },
+    });
     const results = projects.map(handleGetProjectProgress);
     res.json(results);
   } catch (error) {
@@ -37,7 +40,10 @@ exports.getProjectNo = async (req, res) => {
   const teamValue = req.params.teamValue;
 
   try {
-    const projects = await Project.find({ "team.id": { $nin: [teamValue] } });
+    const projects = await Project.find({
+      "team.id": { $nin: [teamValue] },
+      isProjectClose: { $ne: true },
+    });
     const results = projects.map(handleGetProjectProgress);
     res.json(results);
   } catch (error) {
