@@ -73,6 +73,7 @@ router.put(
   "/projects/update-close/:projectId",
   projectController.updateCloseProject
 );
+router.put("/projects/update/:projectId", projectController.updateProject);
 //test
 router.get("/test", projectController.getAllProjectProgress);
 module.exports = router;

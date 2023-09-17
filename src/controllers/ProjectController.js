@@ -268,6 +268,32 @@ exports.getprojectInfo = async (req, res) => {
     res.status(500).json({ error: "Error.", error });
   }
 };
+
+exports.updateProject = async (req, res) => {
+  try {
+    const projectId = req.params.projectId;
+    const updatedData = req.body;
+
+    const project = await Project.findOneAndUpdate(
+      { _id: projectId },
+      updatedData,
+      { new: true }
+    );
+
+    if (!project) {
+      return res
+        .status(404)
+        .json({ error: `Proyecto con ID ${projectId} no encontrado` });
+    }
+
+    res
+      .status(200)
+      .json({ message: "Proyecto actualizado exitosamente", project });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error al actualizar el proyecto." });
+  }
+};
 function handleGetProjectProgress(project) {
   const daysLeft = project.deadLine;
   const totalMision = project.mision.length;
