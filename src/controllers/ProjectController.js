@@ -294,6 +294,31 @@ exports.updateProject = async (req, res) => {
     res.status(500).json({ error: "Error al actualizar el proyecto." });
   }
 };
+
+exports.updateTeam = async (req, res) => {
+  const { newMemberId } = req.body;
+
+  try {
+    const project = await Project.findById(req.params.projectId);
+
+    if (!project) {
+      return res.status(404).json({
+        error: `Proyecto con ID ${req.params.projectId} no encontrado`,
+      });
+    }
+
+    project.team.push({ id: newMemberId });
+    res
+      .status(200)
+      .json({ message: "Miembro agregado al equipo exitosamente", project });
+
+    await project.save();
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error al actualizar el equipo." });
+  }
+};
+
 function handleGetProjectProgress(project) {
   const daysLeft = project.deadLine;
   const totalMision = project.mision.length;
