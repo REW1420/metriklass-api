@@ -44,8 +44,13 @@ exports.getProjectNo = async (req, res) => {
       "team.id": { $nin: [teamValue] },
       isProjectClose: { $ne: true },
     });
-    const results = projects.map(handleGetProjectProgress);
-    res.json(results);
+
+    const projectResults = projects.map((project) => ({
+      ...project._doc,
+      isMemberInTeam: isMemberInTeam(project.team, teamValue),
+    }));
+
+    res.json(projectResults);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Error al buscar proyectos." });
@@ -322,6 +327,7 @@ exports.updateTeam = async (req, res) => {
 function handleGetProjectProgress(project) {
   const daysLeft = project.deadLine;
   const totalMision = project.mision.length;
+
   const completedMisions = project.mision.filter(
     (mision) => mision.isFinished
   ).length;
@@ -349,4 +355,23 @@ function handleDaysLeft(daysLeft) {
 
   const res = Math.ceil(diferent / (1000 * 60 * 60 * 24));
   return res;
+}
+
+function isMemberInTeam(teamArray, memberIdToCheck) {
+  // Verificar si teamArray es un arreglo
+  if (Array.isArray(teamArray)) {
+    // Usamos el método some() para verificar si algún elemento del arreglo cumple la condición
+    return teamArray.some((member) => {
+      if (Array.isArray(member)) {
+        // Si el elemento es un arreglo, comprobar cada elemento dentro de él
+        return member.some((innerMember) => innerMember.id === memberIdToCheck);
+      } else {
+        // Si el elemento no es un arreglo, comprobar el valor directamente
+        return member.id === memberIdToCheck;
+      }
+    });
+  }
+
+  // Si teamArray no es un arreglo, verificar el valor directamente
+  return teamArray.id === memberIdToCheck;
 }
