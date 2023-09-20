@@ -45,12 +45,9 @@ exports.getProjectNo = async (req, res) => {
       isProjectClose: { $ne: true },
     });
 
-    const projectResults = projects.map((project) => ({
-      ...project._doc,
-      isMemberInTeam: isMemberInTeam(project.team, teamValue),
-    }));
+    const results = projects.map((item) => handleGetProjectProgress(item));
 
-    res.json(projectResults);
+    res.json(results);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Error al buscar proyectos." });
@@ -324,10 +321,10 @@ exports.updateTeam = async (req, res) => {
   }
 };
 
-function handleGetProjectProgress(project) {
+function handleGetProjectProgress(project, userId) {
   const daysLeft = project.deadLine;
   const totalMision = project.mision.length;
-
+  const setIsMemberInTeam = isMemberInTeam(project.mision, userId);
   const completedMisions = project.mision.filter(
     (mision) => mision.isFinished
   ).length;
@@ -338,6 +335,7 @@ function handleGetProjectProgress(project) {
     total: totalMision,
     progress: progress,
     daysLeft: daysLeftCount,
+    isMemberInTeam: setIsMemberInTeam,
     ...project._doc,
   };
 }
