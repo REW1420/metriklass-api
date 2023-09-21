@@ -321,6 +321,27 @@ exports.updateTeam = async (req, res) => {
   }
 };
 
+exports.addNewMision = async (req, res) => {
+  const newMision = req.body;
+  try {
+    const project = await Project.findById(req.params.projectId);
+
+    if (!project) {
+      return res.status(404).json({
+        error: `Proyecto con ID ${req.params.projectId} no encontrado`,
+      });
+    }
+
+    project.mision.push(newMision);
+    await project.save();
+
+    res.status(200).json({ message: "Mision agregada", project });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error al agregar mision." });
+  }
+};
+
 function handleGetProjectProgress(project, userId) {
   const daysLeft = project.deadLine;
   const totalMision = project.mision.length;

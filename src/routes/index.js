@@ -76,6 +76,8 @@ router.put(
 router.put("/projects/update/:projectId", projectController.updateProject);
 //update team
 router.post("/projects/update-team/:projectId", projectController.updateTeam);
+//add mision
+router.post("/projects/add-mision/:projectId", projectController.addNewMision);
 //test
 router.get("/test", projectController.getAllProjectProgress);
 module.exports = router;
