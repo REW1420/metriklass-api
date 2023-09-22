@@ -351,14 +351,28 @@ function handleGetProjectProgress(project, userId) {
   ).length;
   const progress = hadleGetMisionProgress(totalMision, completedMisions);
   const daysLeftCount = handleDaysLeft(daysLeft);
+  const lastMissionId = getLastMissionId(project);
 
   return {
     total: totalMision,
     progress: progress,
     daysLeft: daysLeftCount,
     isMemberInTeam: setIsMemberInTeam,
+    lastMissionId: lastMissionId,
     ...project._doc,
   };
+}
+function getLastMissionId(project) {
+  let lastId = 0; //
+  project.mision.forEach((mision) => {
+    const misionId = parseInt(mision.id);
+
+    if (!isNaN(misionId) && misionId > lastId) {
+      lastId = misionId;
+    }
+  });
+
+  return lastId.toString();
 }
 
 function hadleGetMisionProgress(totalMision, completedMisions) {
