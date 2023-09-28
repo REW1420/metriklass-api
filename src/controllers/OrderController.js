@@ -60,7 +60,7 @@ exports.update = async (req, res) => {
       {
         id: req.params.id,
       },
-      req.body
+      req.bodya
     );
     res.json({ message: "Order updated" }, order);
   } catch (error) {

@@ -321,6 +321,34 @@ exports.updateTeam = async (req, res) => {
   }
 };
 
+exports.deleteTeamMember = async (req, res) => {
+  const memberIdToDelete = req.params.memberId; // ID del miembro a eliminar
+
+  try {
+    const project = await Project.findById(req.params.projectId);
+
+    if (!project) {
+      return res.status(404).json({
+        error: `Proyecto con ID ${req.params.projectId} no encontrado`,
+      });
+    }
+
+    // Filtra el arreglo team para eliminar el miembro con el ID especificado
+    project.team = project.team.filter((member) => member.id !== memberIdToDelete);
+
+    // Guarda el proyecto actualizado
+    await project.save();
+
+    res
+      .status(200)
+      .json({ message: "Miembro eliminado del equipo exitosamente", project });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error al eliminar al miembro del equipo." });
+  }
+};
+
+
 exports.addNewMision = async (req, res) => {
   const newMision = req.body;
   try {

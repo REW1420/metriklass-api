@@ -2,6 +2,7 @@ const { Router } = require("express");
 const router = Router();
 const orderControlloer = require("../controllers/OrderController");
 const projectController = require("../controllers/ProjectController");
+const userController = require("../controllers/UserController");
 const jwtUtils = require("../JWT");
 
 router.get("/", (req, res) => {
@@ -58,6 +59,12 @@ router.get("/projects/own/:owner", projectController.getProjectsByOwner);
 router.get("/projects/close/:teamValue", projectController.getCloseProject);
 //get single project info
 router.get("/projects/info/:projectId", projectController.getprojectInfo);
+//delete team member
+router.delete(
+  "/projects/delete-member/:projectId/:memberId",
+  projectController.deleteTeamMember
+);
+
 //delete project from id
 router.delete("/projects/delete/:id", projectController.deleteProject);
 //update mision status
@@ -80,4 +87,10 @@ router.post("/projects/update-team/:projectId", projectController.updateTeam);
 router.post("/projects/add-mision/:projectId", projectController.addNewMision);
 //test
 router.get("/test", projectController.getAllProjectProgress);
+
+//ALL ROUTER FOR USER HERE
+router.get("/user/test", userController.test);
+router.post("/user/post", userController.createUser);
+router.put("/user/update/:id", userController.updateUser);
+router.get("/user/get/:id", userController.getUserInfo);
 module.exports = router;
