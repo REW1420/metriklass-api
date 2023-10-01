@@ -12,7 +12,7 @@ exports.createUser = async (req, res) => {
       password: passwordHash,
     });
     await user.save();
-    res.status(200).json({ mesagge: "New user added.", ...user });
+    res.status(200).json({ mesagge: "New user added.", ...user._doc });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Error adding a new user." });
