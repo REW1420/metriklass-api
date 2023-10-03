@@ -81,6 +81,33 @@ exports.getLogin = async (req, res) => {
   }
 };
 
+exports.updatePersonalDocs = async (req, res) => {
+  const userId = req.params.userId;
+  const { DUI, Antecedentes, Solvencia } = req.body;
+
+  try {
+    const user = await User.findByIdAndUpdate(
+      userId,
+      {
+        $set: {
+          "personalDocs.DUI": DUI,
+          "personalDocs.Antecedentes": Antecedentes,
+          "personalDocs.Solvencia": Solvencia,
+        },
+      },
+      { new: true }
+    );
+
+    if (!user) {
+      return res.status(404).json({ error: "Usuario no encontrado" });
+    }
+
+    res.status(200).json({ message: "Datos personales actualizados", user });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error al actualizar datos personales" });
+  }
+};
 async function encryptPassword(password) {
   try {
     const passString = password.toString();
