@@ -108,6 +108,42 @@ exports.updatePersonalDocs = async (req, res) => {
     res.status(500).json({ error: "Error al actualizar datos personales" });
   }
 };
+
+exports.updatePassword = async (req, res) => {
+  const userId = req.params.userId;
+  const { currentPassword, newPassword } = req.body;
+
+  try {
+    // Buscar al usuario por su ID
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ error: "Usuario no encontrado" });
+    }
+
+    // Verificar si la contraseña actual es válida
+    const isPasswordValid = await bcrypt.compare(
+      currentPassword,
+      user.password
+    );
+
+    if (!isPasswordValid) {
+      return res.status(401).json({ error: "Contraseña actual incorrecta" });
+    }
+
+    // Encriptar la nueva contraseña
+    const newPasswordHash = await encryptPassword(newPassword);
+
+    // Actualizar la contraseña en la base de datos
+    user.password = newPasswordHash;
+    await user.save();
+
+    res.status(200).json({ message: "Contraseña actualizada exitosamente" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error al actualizar la contraseña" });
+  }
+};
 async function encryptPassword(password) {
   try {
     const passString = password.toString();
