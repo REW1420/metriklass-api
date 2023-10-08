@@ -23,12 +23,15 @@ exports.add = async (req, res) => {
 };
 exports.getProjectsByTeam = async (req, res) => {
   const teamValue = req.params.teamValue;
+
   try {
     const projects = await Project.find({
       "team.id": teamValue,
       isProjectClose: { $ne: true },
     });
-    const results = projects.map(handleGetProjectProgress);
+    const results = projects.map((item) =>
+      handleGetProjectProgress(item, teamValue)
+    );
     res.json(results);
   } catch (error) {
     console.error(error);
@@ -45,7 +48,9 @@ exports.getProjectNo = async (req, res) => {
       isProjectClose: { $ne: true },
     });
 
-    const results = projects.map((item) => handleGetProjectProgress(item));
+    const results = projects.map((item) =>
+      handleGetProjectProgress(item, teamValue)
+    );
 
     res.json(results);
   } catch (error) {
@@ -158,7 +163,9 @@ exports.getProjectsByOwner = async (req, res) => {
         .json({ error: "Ningún proyecto encontrado para ese propietario." });
     }
 
-    const results = projects.map(handleGetProjectProgress);
+    const results = projects.map((item) =>
+      handleGetProjectProgress(item, owner)
+    );
     res.json(results);
   } catch (error) {
     console.error(error);
@@ -226,7 +233,9 @@ exports.getCloseProject = async (req, res) => {
         .json({ message: "No se encontraron proyectos completados." });
     }
 
-    const results = projects.map(handleGetProjectProgress);
+    const results = projects.map((item) =>
+      handleGetProjectProgress(item, teamValue)
+    );
     res.json(results);
   } catch (error) {
     console.error(error);

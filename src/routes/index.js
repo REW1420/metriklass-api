@@ -50,7 +50,7 @@ router.post("/order-post", orderControlloer.add);
 router.post("/project-post", projectController.add);
 
 //get all projects where im in
-router.get("/projects/in/:teamValue", projectController.getProjectsByTeam);
+router.get("/projects/in/:teamValue/", projectController.getProjectsByTeam);
 //get all projects where im not it
 router.get("/projects/out/:teamValue", projectController.getProjectNo);
 //get all projects i onw
