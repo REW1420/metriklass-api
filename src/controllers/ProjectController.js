@@ -256,13 +256,14 @@ exports.deleteProject = async (req, res) => {
 
 exports.getprojectInfo = async (req, res) => {
   try {
+    const user_id = req.params.userId;
     const project = await Project.findById({ _id: req.params.projectId });
     if (!project) {
       return res.status(404).json({
         message: `No se encontraron proyectos con ID: ${req.params.id}`,
       });
     }
-    const results = handleGetProjectProgress(project);
+    const results = handleGetProjectProgress(project, user_id);
 
     res.json(results);
   } catch (error) {
@@ -334,7 +335,9 @@ exports.deleteTeamMember = async (req, res) => {
     }
 
     // Filtra el arreglo team para eliminar el miembro con el ID especificado
-    project.team = project.team.filter((member) => member.id !== memberIdToDelete);
+    project.team = project.team.filter(
+      (member) => member.id !== memberIdToDelete
+    );
 
     // Guarda el proyecto actualizado
     await project.save();
@@ -347,7 +350,6 @@ exports.deleteTeamMember = async (req, res) => {
     res.status(500).json({ error: "Error al eliminar al miembro del equipo." });
   }
 };
-
 
 exports.addNewMision = async (req, res) => {
   const newMision = req.body;
@@ -373,7 +375,7 @@ exports.addNewMision = async (req, res) => {
 function handleGetProjectProgress(project, userId) {
   const daysLeft = project.deadLine;
   const totalMision = project.mision.length;
-  const setIsMemberInTeam = isMemberInTeam(project.mision, userId);
+  const setIsMemberInTeam = isMemberInTeam(project.team, userId);
   const completedMisions = project.mision.filter(
     (mision) => mision.isFinished
   ).length;

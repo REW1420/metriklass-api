@@ -58,7 +58,10 @@ router.get("/projects/own/:owner", projectController.getProjectsByOwner);
 //get close project by team
 router.get("/projects/close/:teamValue", projectController.getCloseProject);
 //get single project info
-router.get("/projects/info/:projectId", projectController.getprojectInfo);
+router.get(
+  "/projects/info/:projectId/:userId",
+  projectController.getprojectInfo
+);
 //delete team member
 router.delete(
   "/projects/delete-member/:projectId/:memberId",
