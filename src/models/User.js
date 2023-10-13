@@ -10,6 +10,10 @@ const ProfileSchema = new Schema({
     type: String,
     trim: true,
   },
+  occupation: {
+    type: String,
+    trim: true,
+  },
   password: {
     type: String,
     trim: true,

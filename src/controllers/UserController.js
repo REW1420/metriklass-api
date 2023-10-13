@@ -3,19 +3,27 @@ const bcrypt = require("bcrypt");
 
 exports.createUser = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const users = await User.find({}); // Espera la promesa y obtiene los resultados
+    const { name, email, password, occupation } = req.body;
+
+    // Comprueba si el correo electrónico ya existe en la base de datos
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(409).json({ message: "El correo ya existe" });
+    }
 
     const passwordHash = await encryptPassword(password);
     const user = new User({
       name,
       email,
       password: passwordHash,
+      occupation,
     });
     await user.save();
-    res.status(200).json({ mesagge: "New user added.", ...user._doc });
+    res.status(200).json({ message: "Nuevo usuario agregado", ...user._doc });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Error adding a new user." });
+    res.status(500).json({ error: "Error al agregar un nuevo usuario" });
   }
 };
 
@@ -31,16 +39,27 @@ exports.test = async (req, res) => {
 
 exports.updateUser = async (req, res) => {
   try {
-    const user = await User.findByIdAndUpdate(
-      {
-        _id: req.params.id,
-      },
-      req.body
-    );
-    res.status(200).json({ mesagge: "user update.", ...user._doc });
+    const allUsersEmail = await User.find({ _id: { $ne: req.params.id } });
+
+    const emailExists = await checkIfEmailExists(allUsersEmail, req.body.email);
+
+    if (emailExists) {
+      return res
+        .status(401)
+        .send({ message: "Este correo electronico ya esta registrado" });
+    } else {
+      const updatedUser = await User.findByIdAndUpdate(
+        req.params.id,
+        req.body,
+        { new: true }
+      );
+      return res
+        .status(200)
+        .json({ message: "Usuario actualizado.", ...updatedUser._doc });
+    }
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Error updating users." });
+    res.status(500).json({ error: "Error al actualizar usuarios." });
   }
 };
 
@@ -155,3 +174,8 @@ async function encryptPassword(password) {
     throw error;
   }
 }
+
+const checkIfEmailExists = async (allUsersEmail, newEmail) => {
+  const existingEmails = allUsersEmail.map((user) => user.email);
+  return existingEmails.includes(newEmail);
+};
