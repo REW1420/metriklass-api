@@ -3,6 +3,7 @@ const router = Router();
 const orderControlloer = require("../controllers/OrderController");
 const projectController = require("../controllers/ProjectController");
 const userController = require("../controllers/UserController");
+const dashboardController = require("../controllers/DashboardController");
 const jwtUtils = require("../JWT");
 
 router.get("/", (req, res) => {
@@ -99,4 +100,9 @@ router.get("/user/get/:id", userController.getUserInfo);
 router.post("/user/login", userController.getLogin);
 router.put("/user/update-docs/:userId", userController.updatePersonalDocs);
 router.put("/user/update-pass/:userId", userController.updatePassword);
+
+//all dashboard routes here
+router.get("/kpi/test", dashboardController.test);
+router.get("/kpi/post/:id", dashboardController.createObject);
+router.get("/kpi/get/:id", dashboardController.getObject);
 module.exports = router;
