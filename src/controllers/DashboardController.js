@@ -1,4 +1,6 @@
 const Dashboard = require("../models/Dashboard");
+const Project = require("../models/Project");
+const project = require("../models/Project");
 
 exports.test = async (req, res) => {
   try {
@@ -54,13 +56,25 @@ exports.getObject = async (req, res) => {
     const user_id = req.params.id;
 
     const kpi = await Dashboard.find({ user_id });
+    const projects = await Project.find({
+      "team.id": user_id,
+    });
 
     if (!kpi || kpi.length === 0) {
       // Comprueba si no se encontraron KPIs para el usuario.
       return res.status(404).json({ message: "No KPI for this User ID!" });
     }
 
-    return res.status(200).json(kpi);
+    const projectKpi = kpiProject(projects);
+
+    return res.status(200).json({
+      kpi,
+      project: [
+        { total: projectKpi.totalProjects },
+        { pending: projectKpi.pendingProjects },
+        { isFinished: projectKpi.totalFinishedProjects },
+      ],
+    });
   } catch (error) {
     // Manejo de errores: Imprime el error en la consola y responde con un error 500.
     console.error(error);
@@ -83,6 +97,20 @@ function containsDate(kpi, _date) {
   return kpi.some((item) => item.date === _date);
 }
 
+function kpiProject(project) {
+  const totalProjects = project.length;
+  const finishedProjects = project.filter((item) => item.isFinished);
+  const pendingProjects = totalProjects - finishedProjects;
+
+  // La variable 'finishedProjects' contiene ahora los proyectos finalizados.
+  const totalFinishedProjects = finishedProjects.length;
+
+  return {
+    totalProjects,
+    totalFinishedProjects,
+    pendingProjects,
+  };
+}
 function updateCount(kpi, _date) {
   const updatedKPI = kpi.map((item) => {
     if (item.date === _date) {
