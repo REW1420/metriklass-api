@@ -87,7 +87,7 @@ exports.updateMisionStatus = async (req, res) => {
     // Guarda el proyecto actualizado
     await project.save();
 
-    res.json(mission); // Devuelve la misión actualizada
+    res.json({ message: "Mision actualizada", project: project }); // UPDATE devuelve el projecto
     await project.save();
   } catch (error) {
     console.error(error);
