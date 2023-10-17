@@ -63,7 +63,7 @@ exports.updateMisionStatus = async (req, res) => {
   const projectId = req.params.projectId;
   const misionId = req.params.misionId;
   const newStatus = req.body.newStatus;
-
+  const user_id = req.params.userId;
   try {
     //search the project
     const project = await Project.findById(projectId);
@@ -87,7 +87,8 @@ exports.updateMisionStatus = async (req, res) => {
     // Guarda el proyecto actualizado
     await project.save();
 
-    res.json({ message: "Mision actualizada", project: project }); // UPDATE devuelve el projecto
+    const results = handleGetProjectProgress(project, user_id);
+    res.json({ message: "Mision actualizada", project: results }); // Devuelve la misión actualizada
     await project.save();
   } catch (error) {
     console.error(error);
