@@ -69,11 +69,16 @@ exports.getObject = async (req, res) => {
 
     return res.status(200).json({
       kpi,
-      project: [
-        { total: projectKpi.totalProjects },
-        { pending: projectKpi.pendingProjects },
-        { isFinished: projectKpi.totalFinishedProjects },
-      ],
+      project: {
+        total: projectKpi.totalProjects,
+        pending: projectKpi.pendingProjects,
+        isFinished: projectKpi.totalFinishedProjects,
+
+        finishedPercentage: getPercentage(
+          projectKpi.totalProjects,
+          projectKpi.totalFinishedProjects
+        ),
+      },
     });
   } catch (error) {
     // Manejo de errores: Imprime el error en la consola y responde con un error 500.
@@ -120,4 +125,12 @@ function updateCount(kpi, _date) {
     return item;
   });
   return updatedKPI;
+}
+
+function getPercentage(total, finished) {
+  if (total === 0) {
+    return 0.0;
+  }
+
+  return (total / finished).toFixed(2);
 }
