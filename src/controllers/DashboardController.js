@@ -154,5 +154,5 @@ function getPercentage(total, finished) {
     return 0.0;
   }
 
-  return (total / finished).toFixed(2);
+  return parseFloat((finished / total).toFixed(2));
 }
