@@ -20,10 +20,7 @@ exports.createObject = async (req, res) => {
     const user_id = req.params.id;
     const kpi = await Dashboard.find({ user_id });
 
-    if (!kpi || kpi.length === 0) {
-      // Comprueba si no se encontraron KPIs para el usuario.
-      return res.status(404).json({ message: "No KPI for this User ID!" });
-    }
+   
 
     if (containsDate(kpi, _date)) {
       const updateKpi = await Dashboard.findOne({ user_id, date: _date });
