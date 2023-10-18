@@ -60,12 +60,28 @@ exports.getObject = async (req, res) => {
       "team.id": user_id,
     });
 
+    const projectKpi = kpiProject(projects);
+
     if (!kpi || kpi.length === 0) {
       // Comprueba si no se encontraron KPIs para el usuario.
-      return res.status(404).json({ message: "No KPI for this User ID!" });
-    }
+      return res.status(404).json({
+        message: "No KPI for this User ID!",
+        kpi: {
+          date: getDate(),
+          count: 0,
+        },
+        project: {
+          total: projectKpi.totalProjects,
+          pending: projectKpi.pendingProjects,
+          isFinished: projectKpi.totalFinishedProjects,
 
-    const projectKpi = kpiProject(projects);
+          finishedPercentage: getPercentage(
+            projectKpi.totalProjects,
+            projectKpi.totalFinishedProjects
+          ),
+        },
+      });
+    }
 
     return res.status(200).json({
       kpi,
@@ -104,8 +120,8 @@ function containsDate(kpi, _date) {
 
 function kpiProject(project) {
   const totalProjects = project.length;
-  const finishedProjects = project.filter((item) => item.isFinished);
-  const pendingProjects = totalProjects - finishedProjects;
+  const finishedProjects = project.filter((item) => item.isProjectClose);
+  const pendingProjects = totalProjects - finishedProjects.length;
 
   // La variable 'finishedProjects' contiene ahora los proyectos finalizados.
   const totalFinishedProjects = finishedProjects.length;
@@ -128,7 +144,7 @@ function updateCount(kpi, _date) {
 }
 
 function getPercentage(total, finished) {
-  if (total === 0) {
+  if (total === 0 || finished === 0) {
     return 0.0;
   }
 
