@@ -69,6 +69,8 @@ exports.getObject = async (req, res) => {
         kpi: {
           date: getDate(),
           count: 0,
+          date: getDate(),
+          count: 0,
         },
         project: {
           total: projectKpi.totalProjects,
