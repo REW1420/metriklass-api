@@ -69,7 +69,7 @@ exports.getObject = async (req, res) => {
         kpi: {
           date: getDate(),
           count: 0,
-          date: getDate(),
+          date: "2022-10-18",
           count: 0,
         },
         project: {
