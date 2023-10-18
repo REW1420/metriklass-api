@@ -64,7 +64,7 @@ exports.getObject = async (req, res) => {
 
     if (!kpi || kpi.length === 0) {
       // Comprueba si no se encontraron KPIs para el usuario.
-      return res.status(404).json({
+      return res.status(200).json({
         message: "No KPI for this User ID!",
         kpi: {
           date: getDate(),
