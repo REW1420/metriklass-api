@@ -20,8 +20,6 @@ exports.createObject = async (req, res) => {
     const user_id = req.params.id;
     const kpi = await Dashboard.find({ user_id });
 
-   
-
     if (containsDate(kpi, _date)) {
       const updateKpi = await Dashboard.findOne({ user_id, date: _date });
       if (updateKpi) {

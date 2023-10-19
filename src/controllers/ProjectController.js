@@ -73,7 +73,7 @@ exports.updateMisionStatus = async (req, res) => {
     }
 
     //search the mission
-    const mission = project.mision.find((m) => m.id.toString() === misionId);
+    const mission = project.mision.find((m) => m._id.toString() === misionId);
 
     if (!mission) {
       return res
@@ -397,7 +397,7 @@ function handleGetProjectProgress(project, userId) {
 
   return {
     total: totalMision,
-    missionLeft: missionLeft,
+    completedMisions: completedMisions,
     progress: progress,
     daysLeft: daysLeftCount,
     isMemberInTeam: setIsMemberInTeam,
@@ -406,7 +406,7 @@ function handleGetProjectProgress(project, userId) {
   };
 }
 function getLastMissionId(project) {
-  let lastId = 0; //
+  let lastId = 0;
   project.mision.forEach((mision) => {
     const misionId = parseInt(mision.id);
 
