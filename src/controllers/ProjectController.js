@@ -386,15 +386,18 @@ function handleGetProjectProgress(project, userId) {
   const daysLeft = project.deadLine;
   const totalMision = project.mision.length;
   const setIsMemberInTeam = isMemberInTeam(project.team, userId);
+
   const completedMisions = project.mision.filter(
     (mision) => mision.isFinished
   ).length;
+  const missionLeft = totalMision - completedMisions;
   const progress = hadleGetMisionProgress(totalMision, completedMisions);
   const daysLeftCount = handleDaysLeft(daysLeft);
   const lastMissionId = getLastMissionId(project);
 
   return {
     total: totalMision,
+    missionLeft: missionLeft,
     progress: progress,
     daysLeft: daysLeftCount,
     isMemberInTeam: setIsMemberInTeam,
