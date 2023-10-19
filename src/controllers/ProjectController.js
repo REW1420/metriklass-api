@@ -60,20 +60,22 @@ exports.getProjectNo = async (req, res) => {
 };
 
 exports.updateMisionStatus = async (req, res) => {
-  const projectId = req.params.projectId;
-  const misionId = req.params.misionId;
-  const newStatus = req.body.newStatus;
-  const user_id = req.params.userId;
   try {
-    //search the project
+    const projectId = req.params.projectId;
+    const misionId = req.params.misionId;
+    const newStatus = req.body.newStatus;
+    const newIsFinished = req.body.isFinished;
+
+    const user_id = req.params.userId;
+    // Busca el proyecto
     const project = await Project.findById(projectId);
 
     if (!project) {
       return res.status(404).json({ error: "Proyecto no encontrado." });
     }
 
-    //search the mission
-    const mission = project.mision.find((m) => m._id.toString() === misionId);
+    // Busca la misión dentro del proyecto
+    const mission = project.mision.id(misionId);
 
     if (!mission) {
       return res
@@ -81,15 +83,15 @@ exports.updateMisionStatus = async (req, res) => {
         .json({ error: "Misión no encontrada en el proyecto." });
     }
 
-    // Actualiza el estado de la misión
+    // Actualiza el estado y el status de la misión
+    mission.isFinished = newIsFinished;
     mission.status = newStatus;
 
     // Guarda el proyecto actualizado
     await project.save();
 
     const results = handleGetProjectProgress(project, user_id);
-    res.json({ message: "Mision actualizada", project: results }); // Devuelve la misión actualizada
-    await project.save();
+    res.json({ message: "Misión actualizada", project: results });
   } catch (error) {
     console.error(error);
     res
@@ -118,7 +120,7 @@ exports.updateCloseProject = async (req, res) => {
 exports.updateMisionFinished = async (req, res) => {
   const projectId = req.params.projectId;
   const misionId = req.params.misionId;
-  const isFinished = req.body.isFinished;
+  const isFinished = req.body.item;
 
   try {
     //search the project
