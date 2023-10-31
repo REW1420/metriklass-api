@@ -6,14 +6,6 @@ const userController = require("../controllers/UserController");
 const dashboardController = require("../controllers/DashboardController");
 const jwtUtils = require("../JWT");
 
-router.get("/", (req, res) => {
-  const data = {
-    id: "1",
-    name: "API is working",
-  };
-  res.json(data);
-});
-
 //generate jwt from and endpoint
 const secret = "secret";
 router.get("/get-jwt/:userId/:name", (req, res) => {
