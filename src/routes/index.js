@@ -98,3 +98,4 @@ router.get("/kpi/test", dashboardController.test);
 router.get("/kpi/post/:id", dashboardController.createObject);
 router.get("/kpi/get/:id", dashboardController.getObject);
 module.exports = router;
+//commit
