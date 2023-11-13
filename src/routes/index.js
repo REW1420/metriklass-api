@@ -4,6 +4,7 @@ const orderControlloer = require("../controllers/OrderController");
 const projectController = require("../controllers/ProjectController");
 const userController = require("../controllers/UserController");
 const dashboardController = require("../controllers/DashboardController");
+const authController = require("../controllers/MyAuthController");
 const jwtUtils = require("../JWT");
 
 //generate jwt from and endpoint
@@ -97,5 +98,12 @@ router.put("/user/update-pass/:userId", userController.updatePassword);
 router.get("/kpi/test", dashboardController.test);
 router.get("/kpi/post/:id", dashboardController.createObject);
 router.get("/kpi/get/:id", dashboardController.getObject);
+
+//forgot password route
+router.post("/auth/reset", authController.findEmail);
+router.get(
+  "/auth/reset-password/:id/:token",
+  authController.sendEmailWithOneTimeLink
+);
+router.post("/auth/reset-password/:id/:token", authController.changePassword);
 module.exports = router;
-//commit

@@ -271,7 +271,7 @@ exports.getprojectInfo = async (req, res) => {
     const user_id = req.params.userId;
     const project = await Project.findById({ _id: req.params.projectId });
     if (!project) {
-      return res.status(404).json({
+      res.status(404).json({
         message: `No se encontraron proyectos con ID: ${req.params.id}`,
       });
     }
@@ -280,7 +280,7 @@ exports.getprojectInfo = async (req, res) => {
     res.json(results);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Error.", error });
+    res.status(404).json({ error: "Error." });
   }
 };
 
