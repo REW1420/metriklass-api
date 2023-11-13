@@ -1,7 +1,9 @@
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
 const JWT = require("../JWT");
-const HOST_URL = "https://metriklass-api-qgrw-dev.fl0.io";
+require("dotenv").config();
+const nodemailer = require("nodemailer");
+
 exports.findEmail = async (req, res) => {
   try {
     const email = req.body;
@@ -13,9 +15,11 @@ exports.findEmail = async (req, res) => {
     }
 
     const token = JWT.generateJWT(user._doc);
-
+    const link =
+      process.env.HOST_URL + `/auth/reset-password/${user._id}/${token}`;
+    await sendOneTimeEmail(user._doc.email, link);
     return res.status(200).json({
-      link: HOST_URL + `/auth/reset-password/${user._id}/${token}`,
+      link: process.env.HOST_URL + `/auth/reset-password/${user._id}/${token}`,
     });
   } catch (error) {
     console.log(error);
@@ -83,4 +87,29 @@ async function encryptPassword(password) {
   } catch (error) {
     throw error;
   }
+}
+
+function sendOneTimeEmail(userEmail, link) {
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.EMAIL,
+      pass: process.env.APP_PASSWORD,
+    },
+  });
+
+  const mailOptions = {
+    from: process.env.EMAIL,
+    to: userEmail,
+    subject: "Recuperacion de contraseña",
+    text: `Ingrese al link para poder restaurar su contraseña, el link solo durara 15 minutos. ${link}`,
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.error("Error al enviar el correo:", error);
+    } else {
+      console.log("Correo enviado:", info.response);
+    }
+  });
 }
