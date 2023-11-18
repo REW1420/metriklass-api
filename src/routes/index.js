@@ -82,6 +82,11 @@ router.put("/projects/update/:projectId", projectController.updateProject);
 router.post("/projects/update-team/:projectId", projectController.updateTeam);
 //add mision
 router.post("/projects/add-mision/:projectId", projectController.addNewMision);
+//delete single mision
+router.delete(
+  "/projects/delete-mision/:projectId/:misionId/:userId",
+  projectController.DeleteSingleMision
+);
 //test
 router.get("/test", projectController.getAllProjectProgress);
 

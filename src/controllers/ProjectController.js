@@ -384,6 +384,40 @@ exports.addNewMision = async (req, res) => {
   }
 };
 
+exports.DeleteSingleMision = async (req, res) => {
+  try {
+    const { projectId, misionId, userId } = req.params;
+    const project = await Project.findById(projectId);
+
+    if (!project) {
+      return res.status(404).json({
+        error: `Proyecto con ID ${projectId} no encontrado`,
+      });
+    }
+
+    // Encuentra la misión por su ID
+    const misionToDelete = project.mision.id(misionId);
+
+    if (!misionToDelete) {
+      return res.status(404).json({
+        error: `Misión con ID ${misionId} no encontrada en el proyecto`,
+      });
+    }
+
+    // Elimina la misión del array de misiones
+    misionToDelete.remove();
+
+    // Guarda el proyecto actualizado
+    await project.save();
+
+    const results = handleGetProjectProgress(project, userId);
+    return res.status(200).json(results);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error al eliminar la misión." });
+  }
+};
+
 function handleGetProjectProgress(project, userId) {
   const daysLeft = project.deadLine;
   const totalMision = project.mision.length;
