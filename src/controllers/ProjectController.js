@@ -267,6 +267,7 @@ exports.deleteProject = async (req, res) => {
 };
 
 exports.getprojectInfo = async (req, res) => {
+
   try {
     const user_id = req.params.userId;
     const project = await Project.findById({ _id: req.params.projectId });
@@ -462,7 +463,6 @@ function handleDaysLeft(daysLeft) {
   const deadLine = new Date(daysLeft);
   const date = new Date();
 
-  //calculate the diferent
   const diferent = deadLine - date;
 
   const res = Math.ceil(diferent / (1000 * 60 * 60 * 24));
@@ -470,20 +470,15 @@ function handleDaysLeft(daysLeft) {
 }
 
 function isMemberInTeam(teamArray, memberIdToCheck) {
-  // Verificar si teamArray es un arreglo
+  
   if (Array.isArray(teamArray)) {
-    // Usamos el método some() para verificar si algún elemento del arreglo cumple la condición
     return teamArray.some((member) => {
       if (Array.isArray(member)) {
-        // Si el elemento es un arreglo, comprobar cada elemento dentro de él
         return member.some((innerMember) => innerMember.id === memberIdToCheck);
       } else {
-        // Si el elemento no es un arreglo, comprobar el valor directamente
         return member.id === memberIdToCheck;
       }
     });
   }
-
-  // Si teamArray no es un arreglo, verificar el valor directamente
   return teamArray.id === memberIdToCheck;
 }

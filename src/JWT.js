@@ -5,6 +5,7 @@ function generateJWT(payload) {
   return jwt.sign(payload, process.env.SECRET, { expiresIn: "15m" });
 }
 
+
 function validateJWT(token) {
   try {
     jwt.verify(token, process.env.SECRET);

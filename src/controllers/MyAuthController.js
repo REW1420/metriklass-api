@@ -8,6 +8,7 @@ exports.findEmail = async (req, res) => {
   try {
     const email = req.body;
     const user = await User.findOne(email);
+
     if (!user) {
       return res
         .status(404)
@@ -15,12 +16,17 @@ exports.findEmail = async (req, res) => {
     }
 
     const token = JWT.generateJWT(user._doc);
+
     const link =
       process.env.HOST_URL + `/auth/reset-password/${user._id}/${token}`;
-    await sendOneTimeEmail(user._doc.email, link);
+
+      await sendOneTimeEmail(user._doc.email, link);
+
+
     return res.status(200).json({
       link: process.env.HOST_URL + `/auth/reset-password/${user._id}/${token}`,
     });
+
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: 500, message: "Error finding user" });
@@ -30,6 +36,7 @@ exports.findEmail = async (req, res) => {
 exports.sendEmailWithOneTimeLink = async (req, res) => {
   try {
     const { id, token } = req.params;
+
 
     if (JWT.validateJWT(token)) {
       const user = await User.findById(id);
@@ -45,6 +52,7 @@ exports.sendEmailWithOneTimeLink = async (req, res) => {
 };
 
 exports.changePassword = async (req, res, next) => {
+
   try {
     const { id, token } = req.params;
     const { password, confirm_password } = req.body;
@@ -59,6 +67,7 @@ exports.changePassword = async (req, res, next) => {
       }
 
       const encryptedPassword = await encryptPassword(confirm_password);
+      
 
       user.password = encryptedPassword;
       await user.save();
@@ -90,7 +99,9 @@ async function encryptPassword(password) {
 }
 
 function sendOneTimeEmail(userEmail, link) {
+
   const transporter = nodemailer.createTransport({
+
     service: "gmail",
     auth: {
       user: process.env.EMAIL,

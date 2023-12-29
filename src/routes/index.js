@@ -1,6 +1,5 @@
 const { Router } = require("express");
 const router = Router();
-const orderControlloer = require("../controllers/OrderController");
 const projectController = require("../controllers/ProjectController");
 const userController = require("../controllers/UserController");
 const dashboardController = require("../controllers/DashboardController");
@@ -36,9 +35,6 @@ router.get("/validate-jwt", async (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 });
-//order routes
-router.get("/order-list", orderControlloer.list);
-router.post("/order-post", orderControlloer.add);
 
 //project routes
 router.post("/project-post", projectController.add);
@@ -98,7 +94,7 @@ router.get("/user/get/:id", userController.getUserInfo);
 router.post("/user/login", userController.getLogin);
 router.put("/user/update-docs/:userId", userController.updatePersonalDocs);
 router.put("/user/update-pass/:userId", userController.updatePassword);
-
+router.delete("/user/delete/:id", userController.DeleteUserByID);
 //all dashboard routes here
 router.get("/kpi/test", dashboardController.test);
 router.get("/kpi/post/:id", dashboardController.createObject);
@@ -106,6 +102,7 @@ router.get("/kpi/get/:id", dashboardController.getObject);
 
 //forgot password route
 router.post("/auth/reset", authController.findEmail);
+
 router.get(
   "/auth/reset-password/:id/:token",
   authController.sendEmailWithOneTimeLink

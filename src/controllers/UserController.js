@@ -87,7 +87,6 @@ exports.getLogin = async (req, res) => {
       return res.status(404).json({ error: "Usuario no encontrado" });
     }
 
-    
     const isPasswordValid = await bcrypt.compare(password, profile.password);
 
     if (!isPasswordValid) {
@@ -162,6 +161,22 @@ exports.updatePassword = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Error al actualizar la contraseña" });
+  }
+};
+
+exports.DeleteUserByID = async (req, res) => {
+  const userID = req.params.id;
+  try {
+    let user = await User.findOneAndRemove({ _id: userID }).exec();
+    if (!user) {
+      res.status(500).json({ error: "El usuario no existe" });
+    }
+    res
+      .status(200)
+      .json({ message: "Se ha eliminado el usuario correctamente" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error al eliminar usuario" });
   }
 };
 async function encryptPassword(password) {
