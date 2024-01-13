@@ -3,6 +3,7 @@ const router = Router();
 const projectController = require("../controllers/ProjectController");
 const userController = require("../controllers/UserController");
 const dashboardController = require("../controllers/DashboardController");
+const userAdminController = require("../controllers/UserAdminController");
 const authController = require("../controllers/MyAuthController");
 const jwtUtils = require("../JWT");
 
@@ -38,7 +39,8 @@ router.get("/validate-jwt", async (req, res) => {
 
 //project routes
 router.post("/project-post", projectController.add);
-
+//projects global info
+router.get("/project/info", projectController.projectGlobalInfo);
 //get all projects where im in
 router.get("/projects/in/:teamValue/", projectController.getProjectsByTeam);
 //get all projects where im not it
@@ -89,7 +91,9 @@ router.get("/test", projectController.getAllProjectProgress);
 //ALL ROUTER FOR USER HERE
 router.get("/user/test", userController.test);
 router.post("/user/post", userController.createUser);
+
 router.put("/user/update/:id", userController.updateUser);
+
 router.get("/user/get/:id", userController.getUserInfo);
 router.post("/user/login", userController.getLogin);
 router.put("/user/update-docs/:userId", userController.updatePersonalDocs);
@@ -108,4 +112,10 @@ router.get(
   authController.sendEmailWithOneTimeLink
 );
 router.post("/auth/reset-password/:id/:token", authController.changePassword);
+
+//ALL ROUTES FOR ADMIN USER HERE
+router.post("/admin", userAdminController.createAdminUser);
+router.get("/admin", userAdminController.getAllAdminUser);
+router.put("/admin/:user_id", userAdminController.updateAdminUserActive);
+router.post("/admin/login", userAdminController.getAdminLogin);
 module.exports = router;

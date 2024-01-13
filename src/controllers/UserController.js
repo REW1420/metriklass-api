@@ -46,7 +46,7 @@ exports.updateUser = async (req, res) => {
     if (emailExists) {
       return res
         .status(401)
-        .send({ message: "Este correo electronico ya esta registrado" });
+        .send({ message: "Este correo ya esta registrado" });
     } else {
       const updatedUser = await User.findByIdAndUpdate(
         req.params.id,
@@ -163,6 +163,31 @@ exports.updatePassword = async (req, res) => {
     res.status(500).json({ error: "Error al actualizar la contraseña" });
   }
 };
+exports.updatePasswordWithOutConfirmation = async (req, res) => {
+  const userId = req.params.userId;
+  const { newPassword } = req.body;
+
+  try {
+    // Buscar al usuario por su ID
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ error: "Usuario no encontrado" });
+    }
+
+    // Encriptar la nueva contraseña
+    const newPasswordHash = await encryptPassword(newPassword);
+
+    // Actualizar la contraseña en la base de datos
+    user.password = newPasswordHash;
+    await user.save();
+
+    res.status(200).json({ message: "Contraseña actualizada exitosamente" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error al actualizar la contraseña" });
+  }
+};
 
 exports.DeleteUserByID = async (req, res) => {
   const userID = req.params.id;
@@ -179,6 +204,7 @@ exports.DeleteUserByID = async (req, res) => {
     res.status(500).json({ error: "Error al eliminar usuario" });
   }
 };
+
 async function encryptPassword(password) {
   try {
     const passString = password.toString();

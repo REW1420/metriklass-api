@@ -267,7 +267,6 @@ exports.deleteProject = async (req, res) => {
 };
 
 exports.getprojectInfo = async (req, res) => {
-
   try {
     const user_id = req.params.userId;
     const project = await Project.findById({ _id: req.params.projectId });
@@ -419,6 +418,29 @@ exports.DeleteSingleMision = async (req, res) => {
   }
 };
 
+exports.projectGlobalInfo = async (req, res) => {
+  try {
+    const project = await Project.find({});
+
+    if (!project) {
+      return res.status(404).json({ error: "no hay proyectos." });
+    }
+    const closeProjectTotal = project.filter(
+      (item) => item.isProjectClose
+    ).length;
+
+    const activeTotal = project.length - closeProjectTotal;
+    return res.status(200).json({
+      total: project.length,
+      closeTotal: closeProjectTotal,
+      activeTotal: activeTotal,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error en la petición." });
+  }
+};
+
 function handleGetProjectProgress(project, userId) {
   const daysLeft = project.deadLine;
   const totalMision = project.mision.length;
@@ -462,15 +484,12 @@ function hadleGetMisionProgress(totalMision, completedMisions) {
 function handleDaysLeft(daysLeft) {
   const deadLine = new Date(daysLeft);
   const date = new Date();
-
   const diferent = deadLine - date;
-
   const res = Math.ceil(diferent / (1000 * 60 * 60 * 24));
   return res;
 }
 
 function isMemberInTeam(teamArray, memberIdToCheck) {
-  
   if (Array.isArray(teamArray)) {
     return teamArray.some((member) => {
       if (Array.isArray(member)) {
