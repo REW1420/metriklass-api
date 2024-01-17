@@ -36,7 +36,7 @@ exports.getAllAdminUser = async (req, res) => {
       return res.status(404).json({ message: "No hay usuarios que mostrar" });
     }
 
-    return res.status(200).json({ adminUsers });
+    return res.json({users:adminUsers});
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Error al obtener usuarios" });
@@ -102,6 +102,19 @@ exports.getAdminLogin = async (req, res) => {
   }
 };
 
+exports.getActiveStatus = async (req, res) => {
+  try {
+    const user_id = req.params.user_id;
+    const userAdmin = await UserAdmin.findById(user_id);
+    if (!userAdmin) {
+      return res.status(404).json("No existe el usuario");
+    }
+
+    return res.status(200).json({ isActive: userAdmin.active });
+  } catch (error) {
+    res.status(500).json({ error: "Error al obtener estado" });
+  }
+};
 async function encryptPassword(password) {
   try {
     const passString = password.toString();

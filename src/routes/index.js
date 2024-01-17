@@ -118,4 +118,5 @@ router.post("/admin", userAdminController.createAdminUser);
 router.get("/admin", userAdminController.getAllAdminUser);
 router.put("/admin/:user_id", userAdminController.updateAdminUserActive);
 router.post("/admin/login", userAdminController.getAdminLogin);
+router.get("/admin/status/:user_id", userAdminController.getActiveStatus);
 module.exports = router;
