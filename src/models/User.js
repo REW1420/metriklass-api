@@ -18,7 +18,10 @@ const ProfileSchema = new Schema({
     type: String,
     trim: true,
   },
-
+  created_at: {
+    type: Date,
+    default: Date.now,
+  },
   profilePhoto: {
     type: String,
     trim: true,
@@ -41,6 +44,11 @@ const ProfileSchema = new Schema({
       trim: true,
       default: null,
     },
+  },
+  missionCompletedCount: {
+    type: Number,
+    trim: true,
+    default: 0,
   },
 });
 

@@ -49,6 +49,8 @@ router.get("/projects/out/:teamValue", projectController.getProjectNo);
 router.get("/projects/own/:owner", projectController.getProjectsByOwner);
 //get close project by team
 router.get("/projects/close/:teamValue", projectController.getCloseProject);
+//get kpi data from project by id
+router.get("/projects/kpi/:user_id", projectController.getProjectKPIByID);
 //get single project info
 router.get(
   "/projects/info/:projectId/:userId",
@@ -93,7 +95,7 @@ router.get("/user/test", userController.test);
 router.post("/user/post", userController.createUser);
 
 router.put("/user/update/:id", userController.updateUser);
-
+router.get("/user/addCount/:user_id", userController.addMissionCompletedCount);
 router.get("/user/get/:id", userController.getUserInfo);
 router.post("/user/login", userController.getLogin);
 router.put("/user/update-docs/:userId", userController.updatePersonalDocs);
@@ -114,9 +116,19 @@ router.get(
 router.post("/auth/reset-password/:id/:token", authController.changePassword);
 
 //ALL ROUTES FOR ADMIN USER HERE
-router.post("/admin", userAdminController.createAdminUser);
+
 router.get("/admin", userAdminController.getAllAdminUser);
-router.put("/admin/:user_id", userAdminController.updateAdminUserActive);
-router.post("/admin/login", userAdminController.getAdminLogin);
 router.get("/admin/status/:user_id", userAdminController.getActiveStatus);
+router.put("/admin/:user_id", userAdminController.updateAdminUserActive);
+router.put("/admin/update/:user_id", userAdminController.updateInfo);
+router.post("/admin", userAdminController.createAdminUser);
+router.post("/admin/login", userAdminController.getAdminLogin);
+router.post(
+  "/admin/update-user-pass/:user_id",
+  userController.updatePasswordWithOutConfirmation
+);
+router.delete(
+  "/admin/delete/:user_id",
+  userAdminController.deleteAdminUserByID
+);
 module.exports = router;

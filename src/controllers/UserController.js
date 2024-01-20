@@ -1,4 +1,5 @@
 const User = require("../models/User");
+const Project = require("../models/Project");
 const bcrypt = require("bcrypt");
 
 exports.createUser = async (req, res) => {
@@ -164,7 +165,7 @@ exports.updatePassword = async (req, res) => {
   }
 };
 exports.updatePasswordWithOutConfirmation = async (req, res) => {
-  const userId = req.params.userId;
+  const userId = req.params.user_id;
   const { newPassword } = req.body;
 
   try {
@@ -199,6 +200,21 @@ exports.DeleteUserByID = async (req, res) => {
     res
       .status(200)
       .json({ message: "Se ha eliminado el usuario correctamente" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error al eliminar usuario" });
+  }
+};
+exports.addMissionCompletedCount = async (req, res) => {
+  const user_id = req.params.user_id;
+  try {
+    let user = await User.findById(user_id);
+    if (!user) {
+      res.status(500).json({ error: "El usuario no existe" });
+    }
+    user.missionCompletedCount += 1;
+    user = await user.save();
+    res.status(200).json({ count: user.missionCompletedCount });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Error al eliminar usuario" });

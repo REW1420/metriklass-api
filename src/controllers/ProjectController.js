@@ -175,7 +175,32 @@ exports.getProjectsByOwner = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+exports.getProjectKPIByID = async (req, res) => {
+  try {
+    const user_id = req.params.user_id;
+    const projects = await Project.find({ projectOwner: user_id });
+    if (projects.length === 0) {
+      return res
+        .status(404)
+        .json({ error: "Ningún proyecto encontrado para ese propietario." });
+    }
+    const projectOwnCount = projects.filter(
+      (item) => item.projectOwner === user_id
+    );
 
+    const projectParticipatingCount = projects.filter(
+      (item) => item.team === user_id
+    );
+
+    return res.status(200).json({
+      projectOwnCount: projectOwnCount.length,
+      projectParticipatingCount: projectOwnCount.length,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
+};
 exports.getAllProjectProgress = async (req, res) => {
   try {
     // Obtener todos los proyectos

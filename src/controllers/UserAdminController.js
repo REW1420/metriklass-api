@@ -32,11 +32,11 @@ exports.createAdminUser = async (req, res) => {
 exports.getAllAdminUser = async (req, res) => {
   try {
     const adminUsers = await UserAdmin.find({});
-    if (!adminUsers) {
+    if (!adminUsers || adminUsers.length === 0) {
       return res.status(404).json({ message: "No hay usuarios que mostrar" });
     }
 
-    return res.json({users:adminUsers});
+    res.status(200).json({ adminUsers });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Error al obtener usuarios" });
@@ -115,6 +115,49 @@ exports.getActiveStatus = async (req, res) => {
     res.status(500).json({ error: "Error al obtener estado" });
   }
 };
+exports.deleteAdminUserByID = async (req, res) => {
+  try {
+    const user_id = req.params.user_id;
+    const user = await UserAdmin.findByIdAndDelete(user_id);
+    if (!user) {
+      return res.status(404).json({ message: "El usuario no existe" });
+    }
+    res.status(200).json({
+      message: `Se ha eliminado correctamente
+    el usuario `,
+    });
+  } catch (error) {
+    res.status(500).json({ error: "Error al obtener estado" });
+  }
+};
+exports.updateInfo = async (req, res) => {
+  try {
+    const allUsersEmail = await UserAdmin.find({
+      _id: { $ne: req.params.user_id },
+    });
+
+    const emailExists = await checkIfEmailExists(allUsersEmail, req.body.email);
+
+    if (emailExists) {
+      return res
+        .status(401)
+        .send({ message: "Este correo ya esta registrado" });
+    } else {
+      const updatedUser = await UserAdmin.findByIdAndUpdate(
+        req.params.user_id,
+        req.body,
+        { new: true }
+      );
+      return res
+        .status(200)
+        .json({ message: "Usuario actualizado.", ...updatedUser._doc });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error al actualizar usuarios." });
+  }
+};
+
 async function encryptPassword(password) {
   try {
     const passString = password.toString();
@@ -126,3 +169,7 @@ async function encryptPassword(password) {
     throw error;
   }
 }
+const checkIfEmailExists = async (allUsersEmail, newEmail) => {
+  const existingEmails = allUsersEmail.map((user) => user.email);
+  return existingEmails.includes(newEmail);
+};
