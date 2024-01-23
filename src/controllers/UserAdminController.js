@@ -1,5 +1,9 @@
 const UserAdmin = require("../models/UserAdmin");
 const bcrypt = require("bcrypt");
+const {
+  onUserAdminCreate,
+  onLogEventTrigger,
+} = require(".././utils/Events/EventEmitter");
 exports.createAdminUser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -20,6 +24,8 @@ exports.createAdminUser = async (req, res) => {
       password: passwordHash,
     });
     await user.save();
+    // Dispara evento cuando un usuario admin es creado
+    onLogEventTrigger("Usuario administrador creado", "info", user);
     res
       .status(200)
       .json({ message: "Nuevo usuario administrador creado", ...user._doc });
@@ -59,7 +65,14 @@ exports.updateAdminUserActive = async (req, res) => {
 
     if (!userAdmin)
       return res.status(404).json({ message: `Usuario no encontrado` });
-
+    // Dispara evento cuando un usuario admin es creado
+    onLogEventTrigger(
+      `Usuario administrador ${
+        req.body.active ? "Habilitado" : "Deshabilitado"
+      }`,
+      "warning",
+      userAdmin
+    );
     return res.status(200).json({ userAdmin });
   } catch (error) {
     console.error(error);
@@ -126,6 +139,9 @@ exports.deleteAdminUserByID = async (req, res) => {
       message: `Se ha eliminado correctamente
     el usuario `,
     });
+
+    // Dispara evento cuando un usuario admin es creado
+    onLogEventTrigger("Usuario administrador eliminado", "alert", user);
   } catch (error) {
     res.status(500).json({ error: "Error al obtener estado" });
   }
@@ -148,6 +164,13 @@ exports.updateInfo = async (req, res) => {
         req.body,
         { new: true }
       );
+
+      // Dispara evento cuando un usuario admin es creado
+      onLogEventTrigger(
+        "Usuario administrador actualizado",
+        "info",
+        updatedUser
+      );
       return res
         .status(200)
         .json({ message: "Usuario actualizado.", ...updatedUser._doc });
@@ -157,7 +180,36 @@ exports.updateInfo = async (req, res) => {
     res.status(500).json({ error: "Error al actualizar usuarios." });
   }
 };
+exports.updaterAdminPassword = async (req, res) => {
+  const user_id = req.params.user_id;
+  const { newPassword } = req.body;
 
+  try {
+    // Buscar al usuario por su ID
+    const user = await UserAdmin.findById(user_id);
+
+    if (!user) {
+      return res.status(404).json({ error: "Usuario no encontrado" });
+    }
+
+    // Encriptar la nueva contraseña
+    const newPasswordHash = await encryptPassword(newPassword);
+
+    // Actualizar la contraseña en la base de datos
+    user.password = newPasswordHash;
+    await user.save();
+    // Dispara evento cuando un usuario admin es creado
+    onLogEventTrigger(
+      "Usuario administrador contraseña actualizada",
+      "warning",
+      user
+    );
+    res.status(200).json({ message: "Contraseña actualizada exitosamente" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error al actualizar la contraseña" });
+  }
+};
 async function encryptPassword(password) {
   try {
     const passString = password.toString();

@@ -173,6 +173,7 @@ exports.updatePasswordWithOutConfirmation = async (req, res) => {
     const user = await User.findById(userId);
 
     if (!user) {
+      console.error("usuario no encontrado");
       return res.status(404).json({ error: "Usuario no encontrado" });
     }
 

@@ -5,6 +5,7 @@ const userController = require("../controllers/UserController");
 const dashboardController = require("../controllers/DashboardController");
 const userAdminController = require("../controllers/UserAdminController");
 const authController = require("../controllers/MyAuthController");
+const logController = require("../controllers/LogController");
 const jwtUtils = require("../JWT");
 
 //generate jwt from and endpoint
@@ -119,16 +120,24 @@ router.post("/auth/reset-password/:id/:token", authController.changePassword);
 
 router.get("/admin", userAdminController.getAllAdminUser);
 router.get("/admin/status/:user_id", userAdminController.getActiveStatus);
-router.put("/admin/:user_id", userAdminController.updateAdminUserActive);
 router.put("/admin/update/:user_id", userAdminController.updateInfo);
 router.post("/admin", userAdminController.createAdminUser);
 router.post("/admin/login", userAdminController.getAdminLogin);
-router.post(
+router.put(
   "/admin/update-user-pass/:user_id",
   userController.updatePasswordWithOutConfirmation
+);
+router.put("/admin/:user_id", userAdminController.updateAdminUserActive);
+router.put(
+  "/admin/update-admin-pass/:user_id",
+  userAdminController.updaterAdminPassword
 );
 router.delete(
   "/admin/delete/:user_id",
   userAdminController.deleteAdminUserByID
 );
+
+///ALL LOG ROUTES HERE
+router.post("/log", logController.createLog);
+router.get("/log", logController.getAllLogs);
 module.exports = router;
