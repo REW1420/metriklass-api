@@ -30,7 +30,11 @@ exports.createAdminUser = async (req, res) => {
       .status(200)
       .json({ message: "Nuevo usuario administrador creado", ...user._doc });
   } catch (error) {
-    console.error(error);
+    onLogEventTrigger(
+      "Error al agregar un nuevo usuario",
+      "error",
+      "Server error"
+    );
     res.status(500).json({ error: "Error al agregar un nuevo usuario" });
   }
 };
@@ -44,7 +48,7 @@ exports.getAllAdminUser = async (req, res) => {
 
     res.status(200).json({ adminUsers });
   } catch (error) {
-    console.error(error);
+    onLogEventTrigger("Error al obtener usuarios", "error", "Server error");
     res.status(500).json({ error: "Error al obtener usuarios" });
   }
 };
@@ -75,7 +79,11 @@ exports.updateAdminUserActive = async (req, res) => {
     );
     return res.status(200).json({ userAdmin });
   } catch (error) {
-    console.error(error);
+    onLogEventTrigger(
+      "Error al actualizar estado del usuarios",
+      "error",
+      "Server error"
+    );
     res.status(500).json({ error: "Error al actualizar estado del usuarios" });
   }
 };
@@ -110,7 +118,7 @@ exports.getAdminLogin = async (req, res) => {
 
     res.status(200).json({ message: "Inicio de sesión exitoso", profile });
   } catch (error) {
-    console.error(error);
+    onLogEventTrigger("Error al iniciar sesión", "error", "Server error");
     res.status(500).json({ error: "Error al iniciar sesión" });
   }
 };
@@ -140,10 +148,14 @@ exports.deleteAdminUserByID = async (req, res) => {
     el usuario `,
     });
 
-    // Dispara evento cuando un usuario admin es creado
     onLogEventTrigger("Usuario administrador eliminado", "alert", user);
   } catch (error) {
-    res.status(500).json({ error: "Error al obtener estado" });
+    onLogEventTrigger(
+      "Error al eliminar usuario administrador",
+      "error",
+      "Server error"
+    );
+    res.status(500).json({ error: "Error al eliminar usuario administrador" });
   }
 };
 exports.updateInfo = async (req, res) => {
@@ -176,7 +188,11 @@ exports.updateInfo = async (req, res) => {
         .json({ message: "Usuario actualizado.", ...updatedUser._doc });
     }
   } catch (error) {
-    console.error(error);
+    onLogEventTrigger(
+      "Error al actualizar usuario administrador",
+      "error",
+      "Server error"
+    );
     res.status(500).json({ error: "Error al actualizar usuarios." });
   }
 };
@@ -206,7 +222,11 @@ exports.updaterAdminPassword = async (req, res) => {
     );
     res.status(200).json({ message: "Contraseña actualizada exitosamente" });
   } catch (error) {
-    console.error(error);
+    onLogEventTrigger(
+      "Error al actualizar contraseña de administrador",
+      "error",
+      "Server error"
+    );
     res.status(500).json({ error: "Error al actualizar la contraseña" });
   }
 };

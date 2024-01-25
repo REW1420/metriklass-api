@@ -20,7 +20,7 @@ const LogSchema = new Schema({
   },
 
   origin: {
-    type: Schema.Types.ObjectId,
+    type: String,
     ref: "UserAdmin",
     trim: true,
   },

@@ -1,7 +1,7 @@
 const User = require("../models/User");
 const Project = require("../models/Project");
 const bcrypt = require("bcrypt");
-
+const { onLogEventTrigger } = require(".././utils/Events/EventEmitter");
 exports.createUser = async (req, res) => {
   try {
     const users = await User.find({}); // Espera la promesa y obtiene los resultados
@@ -21,9 +21,14 @@ exports.createUser = async (req, res) => {
       occupation,
     });
     await user.save();
+    onLogEventTrigger("Nuevo usuario agregado", "info", user);
     res.status(200).json({ message: "Nuevo usuario agregado", ...user._doc });
   } catch (error) {
-    console.error(error);
+    onLogEventTrigger(
+      "Error al agregar nuevo usuario",
+      "error",
+      "Server error"
+    );
     res.status(500).json({ error: "Error al agregar un nuevo usuario" });
   }
 };
@@ -54,12 +59,13 @@ exports.updateUser = async (req, res) => {
         req.body,
         { new: true }
       );
+      onLogEventTrigger("Usuario actualizado", "info", req.body.id);
       return res
         .status(200)
         .json({ message: "Usuario actualizado.", ...updatedUser._doc });
     }
   } catch (error) {
-    console.error(error);
+    onLogEventTrigger("Error al actualizar usuario", "error", "Server error");
     res.status(500).json({ error: "Error al actualizar usuarios." });
   }
 };
@@ -70,11 +76,15 @@ exports.getUserInfo = async (req, res) => {
     if (!user) {
       res
         .status(200)
-        .json({ mesagge: `No user found wiht id ${req.params.id}` });
+        .json({ mesagge: `No user found with id ${req.params.id}` });
     }
     res.status(200).json(user);
   } catch (error) {
-    console.log("ERROR", error);
+    onLogEventTrigger(
+      "Error al obtener información de usuario",
+      "error",
+      "Server error"
+    );
   }
 };
 
@@ -96,7 +106,11 @@ exports.getLogin = async (req, res) => {
 
     res.status(200).json({ message: "Inicio de sesión exitoso", profile });
   } catch (error) {
-    console.error(error);
+    onLogEventTrigger(
+      "Error al iniciar sesión",
+      "error",
+      `Server error ${email}`
+    );
     res.status(500).json({ error: "Error al iniciar sesión" });
   }
 };
@@ -123,8 +137,13 @@ exports.updatePersonalDocs = async (req, res) => {
     }
 
     res.status(200).json({ message: "Datos personales actualizados", user });
+    onLogEventTrigger("Datos personales actualizados", "info", user);
   } catch (error) {
-    console.error(error);
+    onLogEventTrigger(
+      "Error al actualizar datos personales",
+      "error",
+      `Server error ${userId}`
+    );
     res.status(500).json({ error: "Error al actualizar datos personales" });
   }
 };
@@ -159,8 +178,13 @@ exports.updatePassword = async (req, res) => {
     await user.save();
 
     res.status(200).json({ message: "Contraseña actualizada exitosamente" });
+    onLogEventTrigger("Contraseña de usuario actualizada", "info", user);
   } catch (error) {
-    console.error(error);
+    onLogEventTrigger(
+      "Error al actualizar contraseña",
+      "error",
+      "Server error"
+    );
     res.status(500).json({ error: "Error al actualizar la contraseña" });
   }
 };
@@ -185,8 +209,13 @@ exports.updatePasswordWithOutConfirmation = async (req, res) => {
     await user.save();
 
     res.status(200).json({ message: "Contraseña actualizada exitosamente" });
+    onLogEventTrigger("Contraseña de usuario actualizada", "info", user);
   } catch (error) {
-    console.error(error);
+    onLogEventTrigger(
+      "Error al actualizar contraseña",
+      "error",
+      "Server error"
+    );
     res.status(500).json({ error: "Error al actualizar la contraseña" });
   }
 };
@@ -201,8 +230,9 @@ exports.DeleteUserByID = async (req, res) => {
     res
       .status(200)
       .json({ message: "Se ha eliminado el usuario correctamente" });
+    onLogEventTrigger("Usuario eliminado", "warning", userID);
   } catch (error) {
-    console.error(error);
+    onLogEventTrigger("Error al eliminar usuario", "error", "Server error");
     res.status(500).json({ error: "Error al eliminar usuario" });
   }
 };
