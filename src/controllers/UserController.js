@@ -24,11 +24,9 @@ exports.createUser = async (req, res) => {
     onLogEventTrigger("Nuevo usuario agregado", "info", user);
     res.status(200).json({ message: "Nuevo usuario agregado", ...user._doc });
   } catch (error) {
-    onLogEventTrigger(
-      "Error al agregar nuevo usuario",
-      "error",
-      "Server error"
-    );
+    onLogEventTrigger("Error al agregar nuevo usuario", "error", {
+      _id: "Server error",
+    });
     res.status(500).json({ error: "Error al agregar un nuevo usuario" });
   }
 };
@@ -53,7 +51,7 @@ exports.updateUser = async (req, res) => {
       onLogEventTrigger(
         "Error al actualizar usuario correo de usuario",
         "error",
-        "Email error"
+        { _id: "Email error" }
       );
       return res
         .status(401)
@@ -70,7 +68,9 @@ exports.updateUser = async (req, res) => {
         .json({ message: "Usuario actualizado.", ...updatedUser._doc });
     }
   } catch (error) {
-    onLogEventTrigger("Error al actualizar usuario", "error", "Server error");
+    onLogEventTrigger("Error al actualizar usuario", "error", {
+      _id: "Email error",
+    });
     res.status(500).json({ error: "Error al actualizar usuarios." });
   }
 };
@@ -85,11 +85,9 @@ exports.getUserInfo = async (req, res) => {
     }
     res.status(200).json(user);
   } catch (error) {
-    onLogEventTrigger(
-      "Error al obtener información de usuario",
-      "error",
-      "Server error"
-    );
+    onLogEventTrigger("Error al obtener información de usuario", "error", {
+      _id: "Email error",
+    });
   }
 };
 
@@ -111,11 +109,9 @@ exports.getLogin = async (req, res) => {
 
     res.status(200).json({ message: "Inicio de sesión exitoso", profile });
   } catch (error) {
-    onLogEventTrigger(
-      "Error al iniciar sesión",
-      "error",
-      `Server error ${email}`
-    );
+    onLogEventTrigger("Error al iniciar sesión", "error", {
+      _id: "Email error",
+    });
     res.status(500).json({ error: "Error al iniciar sesión" });
   }
 };
@@ -144,11 +140,9 @@ exports.updatePersonalDocs = async (req, res) => {
     res.status(200).json({ message: "Datos personales actualizados", user });
     onLogEventTrigger("Datos personales actualizados", "info", user);
   } catch (error) {
-    onLogEventTrigger(
-      "Error al actualizar datos personales",
-      "error",
-      `Server error ${userId}`
-    );
+    onLogEventTrigger("Error al actualizar datos personales", "error", {
+      _id: "Email error",
+    });
     res.status(500).json({ error: "Error al actualizar datos personales" });
   }
 };
@@ -185,11 +179,9 @@ exports.updatePassword = async (req, res) => {
     res.status(200).json({ message: "Contraseña actualizada exitosamente" });
     onLogEventTrigger("Contraseña de usuario actualizada", "info", user);
   } catch (error) {
-    onLogEventTrigger(
-      "Error al actualizar contraseña",
-      "error",
-      "Server error"
-    );
+    onLogEventTrigger("Error al actualizar contraseña", "error", {
+      _id: "Email error",
+    });
     res.status(500).json({ error: "Error al actualizar la contraseña" });
   }
 };
@@ -216,11 +208,9 @@ exports.updatePasswordWithOutConfirmation = async (req, res) => {
     res.status(200).json({ message: "Contraseña actualizada exitosamente" });
     onLogEventTrigger("Contraseña de usuario actualizada", "info", user);
   } catch (error) {
-    onLogEventTrigger(
-      "Error al actualizar contraseña",
-      "error",
-      "Server error"
-    );
+    onLogEventTrigger("Error al actualizar contraseña", "error", {
+      _id: "Email error",
+    });
     res.status(500).json({ error: "Error al actualizar la contraseña" });
   }
 };
@@ -232,12 +222,14 @@ exports.DeleteUserByID = async (req, res) => {
     if (!user) {
       res.status(500).json({ error: "El usuario no existe" });
     }
+    onLogEventTrigger("Usuario eliminado", "warning", "undefined");
     res
       .status(200)
       .json({ message: "Se ha eliminado el usuario correctamente" });
-    onLogEventTrigger("Usuario eliminado", "warning", userID);
   } catch (error) {
-    onLogEventTrigger("Error al eliminar usuario", "error", "Server error");
+    onLogEventTrigger("Error al eliminar usuario", "error", {
+      _id: "Email error",
+    });
     res.status(500).json({ error: "Error al eliminar usuario" });
   }
 };

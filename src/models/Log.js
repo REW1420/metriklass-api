@@ -21,7 +21,6 @@ const LogSchema = new Schema({
 
   origin: {
     type: String,
-    ref: "UserAdmin",
     trim: true,
   },
 });
