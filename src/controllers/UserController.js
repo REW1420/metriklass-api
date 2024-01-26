@@ -50,6 +50,11 @@ exports.updateUser = async (req, res) => {
     const emailExists = await checkIfEmailExists(allUsersEmail, req.body.email);
 
     if (emailExists) {
+      onLogEventTrigger(
+        "Error al actualizar usuario correo de usuario",
+        "error",
+        "Email error"
+      );
       return res
         .status(401)
         .send({ message: "Este correo ya esta registrado" });

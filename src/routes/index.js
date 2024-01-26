@@ -138,6 +138,6 @@ router.delete(
 );
 
 ///ALL LOG ROUTES HERE
-router.post("/log", logController.createLog);
+
 router.get("/log", logController.getAllLogs);
 module.exports = router;
